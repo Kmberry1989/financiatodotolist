@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Financial Action Plan Dashboard</title>
+    <title>Financia-to-do-to-list!</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -19,7 +19,7 @@
             background-color: #e8f5e9;
             border-left-color: #4caf50;
         }
-        .task-card.completed .task-title {
+        .task-card.completed .task-title, .task-card.completed .custom-title {
             text-decoration: line-through;
             color: #666;
         }
@@ -33,18 +33,60 @@
         details > summary::-webkit-details-marker { display: none; }
         details[open] summary .arrow-down { transform: rotate(180deg); }
         .arrow-down { transition: transform 0.2s; }
+        .custom-input {
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            padding: 0.5rem;
+            width: 100%;
+        }
+        .custom-input:focus {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px #3b82f680;
+        }
+
+        @media print {
+            body {
+                background-color: #fff;
+            }
+            header, .summary-cards, .progress-bar-container, .action-buttons, .task-card details, .task-card input, .task-card button, .task-card a[href] {
+                display: none;
+            }
+            #app {
+                max-width: 100%;
+                padding: 0;
+            }
+            .task-card {
+                box-shadow: none;
+                border: 1px solid #ccc;
+                page-break-inside: avoid;
+                margin-bottom: 1rem;
+            }
+            .print-header {
+                display: block !important;
+                text-align: center;
+                margin-bottom: 2rem;
+            }
+             h1, h2 {
+                color: #000;
+             }
+        }
     </style>
 </head>
 <body class="p-4 sm:p-6 md:p-8">
     <div id="app" class="max-w-7xl mx-auto">
         <!-- Header -->
         <header class="mb-8">
-            <h1 class="text-3xl sm:text-4xl font-bold text-gray-800">Your Financial Action Plan</h1>
-            <p class="text-lg text-gray-600 mt-2">A personalized dashboard to track tasks, deadlines, and savings.</p>
+            <div class="flex items-center space-x-3 sm:space-x-4">
+                <img src="https://raw.githubusercontent.com/Kmberry1989/financiatodotolist/44887d0dd2ad3131aa5961fc332d845e53c2119a/financiatodotolist.png" alt="Financia-to-do-to-list Logo" class="h-12 w-12 sm:h-16 sm:w-16 flex-shrink-0 rounded-full shadow-md">
+                <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 tracking-tight">Financia-to-do-to-list!</h1>
+            </div>
+            <p class="text-lg text-gray-600 mt-2 pl-1 sm:pl-2">A personalized dashboard to track tasks, deadlines, and savings.</p>
         </header>
 
         <!-- Summary Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="summary-cards grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
              <div class="bg-white p-6 rounded-xl shadow-md flex items-center space-x-4">
                  <div class="bg-blue-100 p-3 rounded-full">
                     <svg class="icon text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -59,17 +101,8 @@
                     <svg class="icon text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01"></path><path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 </div>
                 <div>
-                    <p class="text-sm text-gray-500">Monthly Savings Unlocked</p>
+                    <p class="text-sm text-gray-500">Monthly Savings</p>
                     <p id="monthlySavings" class="text-2xl font-bold text-gray-800">$0</p>
-                </div>
-            </div>
-             <div class="bg-white p-6 rounded-xl shadow-md flex items-center space-x-4">
-                <div class="bg-yellow-100 p-3 rounded-full">
-                    <svg class="icon text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-500">Days Until Next Deadline</p>
-                    <p id="nextDeadline" class="text-2xl font-bold text-gray-800">-</p>
                 </div>
             </div>
              <div class="bg-white p-6 rounded-xl shadow-md flex items-center space-x-4">
@@ -81,10 +114,30 @@
                     <p id="oneTimeBenefits" class="text-2xl font-bold text-gray-800">$0</p>
                 </div>
             </div>
+             <div class="bg-white p-6 rounded-xl shadow-md flex items-center space-x-4">
+                <div class="bg-yellow-100 p-3 rounded-full">
+                    <svg class="icon text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Next Deadline</p>
+                    <p id="nextDeadline" class="text-2xl font-bold text-gray-800">-</p>
+                </div>
+            </div>
+             <div class="bg-white p-6 rounded-xl shadow-md flex items-center space-x-4">
+                <div class="bg-purple-100 p-3 rounded-full">
+                    <svg class="icon text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Custom Goals</p>
+                    <p id="customGoals" class="text-2xl font-bold text-gray-800">0 / 0</p>
+                </div>
+            </div>
         </div>
         
         <!-- Progress Bar -->
-        <div class="mb-8">
+        <div class="mb-6 progress-bar-container">
              <div class="flex justify-between mb-1">
                 <span class="text-base font-medium text-blue-700">Overall Progress</span>
                 <span id="progressPercentage" class="text-sm font-medium text-blue-700">0%</span>
@@ -92,6 +145,28 @@
             <div class="w-full bg-gray-200 rounded-full h-4">
                 <div id="progressBar" class="bg-blue-600 h-4 rounded-full progress-bar-fill" style="width: 0%"></div>
             </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="mb-8 text-center flex justify-center items-center space-x-4 action-buttons">
+            <button id="addGoalBtn" class="bg-pink-500 text-white font-bold py-2 px-6 rounded-full hover:bg-pink-600 transition-colors shadow-lg flex items-center">
+                <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v2.5h-2.5a.75.75 0 000 1.5h2.5v2.5a.75.75 0 001.5 0v-2.5h2.5a.75.75 0 000-1.5h-2.5v-2.5z" /></svg>
+                Create a Goal
+            </button>
+            <button id="exportBtn" class="bg-gray-700 text-white font-bold py-2 px-6 rounded-full hover:bg-gray-800 transition-colors shadow-lg flex items-center">
+                <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 3.75a.75.75 0 01.75.75v3.546l1.97-1.97a.75.75 0 111.06 1.06l-3.5 3.5a.75.75 0 01-1.06 0l-3.5-3.5a.75.75 0 111.06-1.06l1.97 1.97V4.5a.75.75 0 01.75-.75z" /><path d="M3.5 12.75a.75.75 0 00-1.5 0v2.5A2.75 2.75 0 004.75 18h10.5A2.75 2.75 0 0018 15.25v-2.5a.75.75 0 00-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5z" /></svg>
+                Export to File
+            </button>
+            <button id="printBtn" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors shadow-lg flex items-center">
+                <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 2.75C5 1.784 5.784 1 6.75 1h6.5c.966 0 1.75.784 1.75 1.75v3.552c.377.046.74.14 1.095.278.356.138.694.319.99.539V2.75A2.75 2.75 0 0015.25 0h-6.5A2.75 2.75 0 006 2.75v14.5A2.75 2.75 0 008.75 20h2.5a.75.75 0 000-1.5h-2.5a1.25 1.25 0 01-1.25-1.25V2.75z" clip-rule="evenodd" /><path d="M14.75 3a.25.25 0 00-.25.25v2.5a.25.25 0 00.25.25h2.5a.25.25 0 00.25-.25V3.25a.25.25 0 00-.25-.25h-2.5zM14.5 4a.5.5 0 00-.5.5v1.5a.5.5 0 00.5.5h1.5a.5.5 0 00.5-.5v-1.5a.5.5 0 00-.5-.5h-1.5z" /><path fill-rule="evenodd" d="M12.75 9a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5a.75.75 0 01-.75-.75zm0 3a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5a.75.75 0 01-.75-.75zm0 3a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5a.75.75 0 01-.75-.75z" clip-rule="evenodd" /></svg>
+                Print Plan
+            </button>
+        </div>
+
+        <!-- Print-only header -->
+        <div class="print-header hidden">
+            <h1 class="text-3xl font-bold">Financia-to-do-to-list!</h1>
+            <p class="text-lg">Your Personalized Financial Action Plan</p>
         </div>
 
         <!-- Action Plan Sections -->
@@ -102,157 +177,26 @@
     document.addEventListener('DOMContentLoaded', () => {
         const today = new Date('2025-10-03T12:00:00.000Z');
         
-        const tasks = [
-            {
-                id: 'extraHelp', title: 'Apply for Medicare "Extra Help" & Savings Programs (MSP)', category: 'Immediate Actions (Next 7 Days)',
-                description: 'Complete the single online SSA application for both "Extra Help" (prescriptions) and Medicare Savings Programs (MSPs). An MSP can pay your ~$174/mo Part B premium.',
-                savings: { monthly: 348, oneTime: 0, description: '~$174/mo from MSP + ~$174/mo from Part D savings.' },
-                deadline: '2025-10-10', contact: { name: 'Social Security Admin.', phone: '1-800-772-1213', link: 'https://www.ssa.gov/medicare/part-d-extra-help' }, completed: false,
-                steps: [
-                    { text: 'Go to the Social Security Administration website.', link: 'https://www.ssa.gov/medicare/part-d-extra-help' },
-                    { text: 'Click the "Apply for Extra Help" button to start.' },
-                    { text: 'Gather required information: Social Security numbers, income details (SSDI, wages), and asset information (bank accounts, IRA).' },
-                    { text: 'Complete the online application. **Crucially**, check the box that gives the state permission to also review your eligibility for Medicare Savings Programs (MSPs).' }
-                ]
-            },
-            {
-                id: 'kokomoDev', title: 'Apply for Kokomo Exterior Home Improvement Program', category: 'Immediate Actions (Next 7 Days)',
-                description: 'Contact the Kokomo Dept. of Development to get on the list for a potential forgivable loan (up to $50k) for critical exterior repairs like your roof.',
-                savings: { monthly: 0, oneTime: 50000, description: 'Up to $50,000 forgivable loan.' },
-                deadline: '2025-10-10', contact: { name: 'Kokomo Dept. of Development', phone: '765-456-7375', link: 'https://www.cityofkokomo.org/departments/development/community_development.php' }, completed: false,
-                steps: [
-                    { text: 'Visit the Department of Development website to understand the program.', link: 'https://www.cityofkokomo.org/departments/development/community_development.php' },
-                    { text: 'Call the office at 765-456-7375 or visit them at City Hall.' },
-                    { text: 'State that you want to apply for the "Exterior Home Improvement Program" for a critical roof repair.' },
-                    { text: 'Ask to be added to the Intake Log or waitlist and inquire about the next steps and required documents for a full application.' }
-                ]
-            },
-            {
-                id: 'snap', title: 'Re-apply for SNAP Benefits', category: 'Immediate Actions (Next 7 Days)',
-                description: 'Submit a new application for the Supplemental Nutrition Assistance Program through the Indiana FSSA portal to re-establish monthly food assistance.',
-                savings: { monthly: 536, oneTime: 0, description: 'Up to ~$536/mo in food benefits.' },
-                deadline: '2025-10-10', contact: { name: 'Indiana FSSA', phone: '1-800-403-0864', link: 'https://www.in.gov/fssa/dfr/2691.htm' }, completed: false,
-                steps: [
-                    { text: 'Go to the Indiana FSSA Benefits Portal.', link: 'https://fssabenefits.in.gov/bp/#/' },
-                    { text: 'Click "Apply for Benefits" and create an account or log in if you have one.' },
-                    { text: 'Complete all sections of the application with your household, income, and asset details.' },
-                    { text: 'Submit the application and monitor your mail and email for any follow-up notices, such as a required interview.' }
-                ]
-            },
-            {
-                id: 'creditCounseling', title: 'Schedule Free Credit Counseling', category: 'Immediate Actions (Next 7 Days)',
-                description: 'Call an NFCC-accredited non-profit to schedule a free debt/budget counseling session. This is the first step towards a Debt Management Plan (DMP).',
-                savings: { monthly: 141, oneTime: 0, description: 'Est. ~$141/mo interest savings on a DMP.' },
-                deadline: '2025-10-10', contact: { name: 'NFCC', phone: '1-800-388-2227', link: 'https://www.nfcc.org' }, completed: false,
-                steps: [
-                    { text: 'Visit the National Foundation for Credit Counseling (NFCC) website.', link: 'https://www.nfcc.org' },
-                    { text: 'Use their agency locator to find a certified non-profit counselor or call them directly.' },
-                    { text: 'Schedule your free, confidential initial consultation.' },
-                    { text: 'During the session, be open about your income, debts, and goals. Ask the counselor to evaluate if a Debt Management Plan (DMP) is a good option for you.' }
-                ]
-            },
-            {
-                id: 'energyAid', title: 'Apply for LIHEAP & Duke Energy Aid', category: 'Short-Term Actions (Next 30-60 Days)',
-                description: "Apply for the Energy Assistance Program (EAP/LIHEAP) through Area Five Agency. Also ask about Duke Energy's 'Share the Light Fund' for extra help.",
-                savings: { monthly: 58, oneTime: 700, description: 'Up to ~$700/yr benefit + winter shutoff protection.' },
-                deadline: '2025-11-15', contact: { name: 'Area Five Agency', phone: '765-454-5562', link: 'https://www.areafive.com/energy-assistance' }, completed: false,
-                steps: [
-                    { text: 'Visit the Area Five Agency website for EAP information.', link: 'https://www.areafive.com/energy-assistance' },
-                    { text: 'Call them to schedule an appointment to apply for the Energy Assistance Program (LIHEAP).' },
-                    { text: 'Gather required documents: photo IDs, SS cards, proof of income for the last 3 months, and your most recent Duke Energy bill.' },
-                    { text: 'During your appointment, ask the caseworker if you can also apply for Duke Energy\'s "Share the Light Fund" for additional assistance.' }
-                ]
-            },
-            {
-                id: 'townshipTrustee', title: 'Contact Center Township Trustee for Emergency Aid', category: 'Short-Term Actions (Next 30-60 Days)',
-                description: 'If you face an immediate utility shutoff or housing crisis, contact the township trustee for essential emergency assistance.',
-                savings: { monthly: 0, oneTime: 500, description: 'Situational emergency aid (e.g., ~$500).' },
-                deadline: '2025-11-20', contact: { name: 'Center Township Trustee', phone: '765-452-8259', link: 'https://centertownship1.com/township-assistance-1' }, completed: false,
-                steps: [
-                    { text: 'Confirm you live in Center Township (most of Kokomo is).', link: 'https://centertownship1.com/' },
-                    { text: 'Call the Trustee\'s office at 765-452-8259 to explain your emergency need.' },
-                    { text: 'They will provide instructions for applying for Township Assistance, which may require an in-person visit.' },
-                    { text: 'Be prepared to provide extensive documentation of your income, expenses, and the nature of your emergency.' }
-                ]
-            },
-            {
-                id: 'usdaLoan', title: 'Initiate USDA Section 504 Home Repair Loan', category: 'Short-Term Actions (Next 30-60 Days)',
-                description: 'As a strong secondary option for home repair, verify your property\'s eligibility and contact the USDA for a 1% interest loan application.',
-                savings: { monthly: 0, oneTime: 40000, description: 'Access to $40,000 loan at 1% interest.' },
-                deadline: '2025-12-02', contact: { name: 'USDA Muncie Office', phone: '765-747-5531', link: 'https://eligibility.sc.egov.usda.gov/eligibility/welcomeAction.do' }, completed: false,
-                steps: [
-                    { text: 'Go to the USDA Eligibility Website.', link: 'https://eligibility.sc.egov.usda.gov/eligibility/welcomeAction.do' },
-                    { text: 'Select "Single Family Housing Repair Loans & Grants" and enter your address to confirm your property is in an eligible area.' },
-                    { text: 'If eligible, call the USDA Muncie Area Office at 765-747-5531.' },
-                    { text: 'Request a full application package for the Section 504 Home Repair Loan.' }
-                ]
-            },
-            {
-                id: 'partD', title: 'Finalize Medicare Part D Plan with SHIP', category: 'Short-Term Actions (Next 30-60 Days)',
-                description: 'Once "Extra Help" is approved, contact Indiana SHIP for free, unbiased counseling to select the best $0-premium Part D plan for your medications.',
-                savings: { monthly: 0, oneTime: 0, description: 'Activates savings from Extra Help & MSP.' },
-                deadline: '2025-12-07', contact: { name: 'SHIP Indiana', phone: '1-800-452-4800', link: 'https://www.in.gov/ship/' }, completed: false,
-                steps: [
-                    { text: 'Wait until you receive the official award letter from Social Security confirming your "Extra Help" status.' },
-                    { text: 'Visit the Indiana SHIP website or call their toll-free number.', link: 'https://www.in.gov/ship/' },
-                    { text: 'Request a free appointment with a SHIP counselor.' },
-                    { text: 'Prepare a list of all your prescription medications. The counselor will use this list with the Medicare Plan Finder to find the most cost-effective plan for you and help you enroll.' }
-                ]
-            },
-            {
-                id: 'dukeWeatherization', title: 'Apply for Duke Energy Weatherization Program', category: 'Long-Term & Ongoing Actions',
-                description: 'Apply for Duke Energy\'s free weatherization program for major upgrades like HVAC repair/replacement, insulation, and air sealing.',
-                savings: { monthly: 30, oneTime: 8000, description: 'Up to $8,000+ in free upgrades + ~$360/yr savings.' },
-                deadline: '2026-03-01', contact: { name: 'Area Five Agency', phone: '765-454-5562', link: 'https://www.areafive.com/weatherization-services' }, completed: false,
-                steps: [
-                    { text: 'Ensure you are approved for the Energy Assistance Program (LIHEAP), as this is a prerequisite.' },
-                    { text: 'Contact Area Five Agency again and state you want to apply for the Duke Energy Weatherization Program.', link: 'https://www.areafive.com/weatherization-services' },
-                    { text: 'Complete the necessary application forms provided by the agency.' },
-                    { text: 'Cooperate with the agency to schedule a home energy audit. This audit determines which free upgrades your home qualifies for.' }
-                ]
-            },
-            {
-                id: 'propertyTax', title: 'Apply for Disabled Persons Property Tax Deduction', category: 'Long-Term & Ongoing Actions',
-                description: 'File a form with the County Auditor to get a $12,480 deduction on your home\'s assessed value, lowering your property tax bill.',
-                savings: { monthly: 15, oneTime: 180, description: 'Est. ~$180/yr in property tax savings.' },
-                deadline: '2026-04-15', contact: { name: 'Howard County Auditor', phone: '(765) 456-2215', link: 'https://www.howardcountyin.gov/auditor' }, completed: false,
-                steps: [
-                    { text: 'Download State Form 1863 from the Howard County Auditor\'s website.', link: 'https://www.howardcountyin.gov/auditor/deductions' },
-                    { text: 'Complete the form. You will need to provide proof of your disability (your SSDI award letter is sufficient).' },
-                    { text: 'Submit the completed form to the Howard County Auditor\'s Office. It is recommended to file before December 31st to apply to the following year\'s taxes.' }
-                ]
-            },
-            {
-                id: 'vita', title: 'Use VITA for Free Tax Filing', category: 'Long-Term & Ongoing Actions',
-                description: "Use a local VITA site for free tax prep. Ensure they check for the Lifetime Learning Credit (tuition), EITC, and the property tax deduction.",
-                savings: { monthly: 200, oneTime: 2400, description: 'Up to $2,400+/yr in tax credits.' },
-                deadline: '2026-04-15', contact: { name: 'IRS VITA Locator', phone: '800-906-9887', link: 'https://www.irs.gov/individuals/free-tax-return-preparation-for-qualifying-taxpayers' }, completed: false,
-                steps: [
-                    { text: 'Starting in late January/early February, use the official IRS VITA Site Locator.', link: 'https://www.irs.gov/individuals/free-tax-return-preparation-for-qualifying-taxpayers' },
-                    { text: 'Find a location in or near Kokomo and call to schedule an appointment.' },
-                    { text: 'Gather all required documents: IDs, SS cards, W-2 from wife, SSA-1099 for you, Form 1098-T for tuition, and records of property tax paid.' },
-                    { text: 'At your appointment, mention all potential credits to the volunteer preparer.' }
-                ]
-            },
-            {
-                id: 'fafsa', title: "Complete FAFSA for Wife's Student Aid", category: 'Long-Term & Ongoing Actions',
-                description: "File the FAFSA to qualify for Pell Grant, state aid (e.g., Adult Student Grant), and IU-specific scholarships.",
-                savings: { monthly: 0, oneTime: 2000, description: 'Up to $2,000+/yr in grants.' },
-                deadline: '2026-03-01', contact: { name: 'Federal Student Aid', phone: '1-800-433-3243', link: 'https://studentaid.gov/h/apply-for-aid/fafsa' }, completed: false,
-                steps: [
-                    { text: 'Go to the official Federal Student Aid FAFSA website.', link: 'https://studentaid.gov/h/apply-for-aid/fafsa' },
-                    { text: 'The student (your wife) and you (as the spouse) must each create a personal FSA ID, which acts as a legal signature.', link: 'https://studentaid.gov/fsa-id/create-account/launch' },
-                    { text: 'Start the FAFSA for the correct academic year (e.g., 2026-2027).' },
-                    { text: 'When prompted, add Indiana University\'s school code (for IU Kokomo it is 001814, check for IU Online) so they receive the results.' },
-                    { text: 'Use the IRS Data Retrieval Tool to automatically and accurately import your tax information.' },
-                    { text: 'Complete all sections and submit the application before Indiana\'s state deadline (typically April 15th).' }
-                ]
-            }
+        const defaultTasks = [
+             { id: 'extraHelp', title: 'Apply for Medicare "Extra Help" & Savings Programs (MSP)', category: 'Immediate Actions (Next 7 Days)', description: 'Complete the single online SSA application for both "Extra Help" (prescriptions) and Medicare Savings Programs (MSPs). An MSP can pay your ~$174/mo Part B premium.', savings: { monthly: 348, oneTime: 0, description: '~$174/mo from MSP + ~$174/mo from Part D savings.' }, deadline: '2025-10-10', contact: { name: 'Social Security Admin.', phone: '1-800-772-1213', link: 'https://www.ssa.gov/medicare/part-d-extra-help' }, steps: [ { text: 'Go to the Social Security Administration website.', link: 'https://www.ssa.gov/medicare/part-d-extra-help' }, { text: 'Click the "Apply for Extra Help" button to start.' }, { text: 'Gather required information: Social Security numbers, income details (SSDI, wages), and asset information (bank accounts, IRA).' }, { text: 'Complete the online application. **Crucially**, check the box that gives the state permission to also review your eligibility for Medicare Savings Programs (MSPs).' } ] },
+            { id: 'kokomoDev', title: 'Apply for Kokomo Exterior Home Improvement Program', category: 'Immediate Actions (Next 7 Days)', description: 'Contact the Kokomo Dept. of Development to get on the list for a potential forgivable loan (up to $50k) for critical exterior repairs like your roof.', savings: { monthly: 0, oneTime: 50000, description: 'Up to $50,000 forgivable loan.' }, deadline: '2025-10-10', contact: { name: 'Kokomo Dept. of Development', phone: '765-456-7375', link: 'https://www.cityofkokomo.org/departments/development/community_development.php' }, steps: [ { text: 'Visit the Department of Development website to understand the program.', link: 'https://www.cityofkokomo.org/departments/development/community_development.php' }, { text: 'Call the office at 765-456-7375 or visit them at City Hall.' }, { text: 'State that you want to apply for the "Exterior Home Improvement Program" for a critical roof repair.' }, { text: 'Ask to be added to the Intake Log or waitlist and inquire about the next steps and required documents for a full application.' } ] },
+            { id: 'snap', title: 'Re-apply for SNAP Benefits', category: 'Immediate Actions (Next 7 Days)', description: 'Submit a new application for the Supplemental Nutrition Assistance Program through the Indiana FSSA portal to re-establish monthly food assistance.', savings: { monthly: 536, oneTime: 0, description: 'Up to ~$536/mo in food benefits.' }, deadline: '2025-10-10', contact: { name: 'Indiana FSSA', phone: '1-800-403-0864', link: 'https://www.in.gov/fssa/dfr/2691.htm' }, steps: [ { text: 'Go to the Indiana FSSA Benefits Portal.', link: 'https://fssabenefits.in.gov/bp/#/' }, { text: 'Click "Apply for Benefits" and create an account or log in if you have one.' }, { text: 'Complete all sections of the application with your household, income, and asset details.' }, { text: 'Submit the application and monitor your mail and email for any follow-up notices, such as a required interview.' } ] },
+            { id: 'creditCounseling', title: 'Schedule Free Credit Counseling', category: 'Immediate Actions (Next 7 Days)', description: 'Call an NFCC-accredited non-profit to schedule a free debt/budget counseling session. This is the first step towards a Debt Management Plan (DMP).', savings: { monthly: 141, oneTime: 0, description: 'Est. ~$141/mo interest savings on a DMP.' }, deadline: '2025-10-10', contact: { name: 'NFCC', phone: '1-800-388-2227', link: 'https://www.nfcc.org' }, steps: [ { text: 'Visit the National Foundation for Credit Counseling (NFCC) website.', link: 'https://www.nfcc.org' }, { text: 'Use their agency locator to find a certified non-profit counselor or call them directly.' }, { text: 'Schedule your free, confidential initial consultation.' }, { text: 'During the session, be open about your income, debts, and goals. Ask the counselor to evaluate if a Debt Management Plan (DMP) is a good option for you.' } ] },
+            { id: 'energyAid', title: 'Apply for LIHEAP & Duke Energy Aid', category: 'Short-Term Actions (Next 30-60 Days)', description: "Apply for the Energy Assistance Program (EAP/LIHEAP) through Area Five Agency. Also ask about Duke Energy's 'Share the Light Fund' for extra help.", savings: { monthly: 58, oneTime: 700, description: 'Up to ~$700/yr benefit + winter shutoff protection.' }, deadline: '2025-11-15', contact: { name: 'Area Five Agency', phone: '765-454-5562', link: 'https://www.areafive.com/energy-assistance' }, steps: [ { text: 'Visit the Area Five Agency website for EAP information.', link: 'https://www.areafive.com/energy-assistance' }, { text: 'Call them to schedule an appointment to apply for the Energy Assistance Program (LIHEAP).' }, { text: 'Gather required documents: photo IDs, SS cards, proof of income for the last 3 months, and your most recent Duke Energy bill.' }, { text: 'During your appointment, ask the caseworker if you can also apply for Duke Energy\'s "Share the Light Fund" for additional assistance.' } ] },
+            { id: 'townshipTrustee', title: 'Contact Center Township Trustee for Emergency Aid', category: 'Short-Term Actions (Next 30-60 Days)', description: 'If you face an immediate utility shutoff or housing crisis, contact the township trustee for essential emergency assistance.', savings: { monthly: 0, oneTime: 500, description: 'Situational emergency aid (e.g., ~$500).' }, deadline: '2025-11-20', contact: { name: 'Center Township Trustee', phone: '765-452-8259', link: 'https://centertownship1.com/township-assistance-1' }, steps: [ { text: 'Confirm you live in Center Township (most of Kokomo is).', link: 'https://centertownship1.com/' }, { text: 'Call the Trustee\'s office at 765-452-8259 to explain your emergency need.' }, { text: 'They will provide instructions for applying for Township Assistance, which may require an in-person visit.' }, { text: 'Be prepared to provide extensive documentation of your income, expenses, and the nature of your emergency.' } ] },
+            { id: 'usdaLoan', title: 'Initiate USDA Section 504 Home Repair Loan', category: 'Short-Term Actions (Next 30-60 Days)', description: 'As a strong secondary option for home repair, verify your property\'s eligibility and contact the USDA for a 1% interest loan application.', savings: { monthly: 0, oneTime: 40000, description: 'Access to $40,000 loan at 1% interest.' }, deadline: '2025-12-02', contact: { name: 'USDA Muncie Office', phone: '765-747-5531', link: 'https://eligibility.sc.egov.usda.gov/eligibility/welcomeAction.do' }, steps: [ { text: 'Go to the USDA Eligibility Website.', link: 'https://eligibility.sc.egov.usda.gov/eligibility/welcomeAction.do' }, { text: 'Select "Single Family Housing Repair Loans & Grants" and enter your address to confirm your property is in an eligible area.' }, { text: 'If eligible, call the USDA Muncie Area Office at 765-747-5531.' }, { text: 'Request a full application package for the Section 504 Home Repair Loan.' } ] },
+            { id: 'partD', title: 'Finalize Medicare Part D Plan with SHIP', category: 'Short-Term Actions (Next 30-60 Days)', description: 'Once "Extra Help" is approved, contact Indiana SHIP for free, unbiased counseling to select the best $0-premium Part D plan for your medications.', savings: { monthly: 0, oneTime: 0, description: 'Activates savings from Extra Help & MSP.' }, deadline: '2025-12-07', contact: { name: 'SHIP Indiana', phone: '1-800-452-4800', link: 'https://www.in.gov/ship/' }, steps: [ { text: 'Wait until you receive the official award letter from Social Security confirming your "Extra Help" status.' }, { text: 'Visit the Indiana SHIP website or call their toll-free number.', link: 'https://www.in.gov/ship/' }, { text: 'Request a free appointment with a SHIP counselor.' }, { text: 'Prepare a list of all your prescription medications. The counselor will use this list with the Medicare Plan Finder to find the most cost-effective plan for you and help you enroll.' } ] },
+            { id: 'dukeWeatherization', title: 'Apply for Duke Energy Weatherization Program', category: 'Long-Term & Ongoing Actions', description: 'Apply for Duke Energy\'s free weatherization program for major upgrades like HVAC repair/replacement, insulation, and air sealing.', savings: { monthly: 30, oneTime: 8000, description: 'Up to $8,000+ in free upgrades + ~$360/yr savings.' }, deadline: '2026-03-01', contact: { name: 'Area Five Agency', phone: '765-454-5562', link: 'https://www.areafive.com/weatherization-services' }, steps: [ { text: 'Ensure you are approved for the Energy Assistance Program (LIHEAP), as this is a prerequisite.' }, { text: 'Contact Area Five Agency again and state you want to apply for the Duke Energy Weatherization Program.', link: 'https://www.areafive.com/weatherization-services' }, { text: 'Complete the necessary application forms provided by the agency.' }, { text: 'Cooperate with the agency to schedule a home energy audit. This audit determines which free upgrades your home qualifies for.' } ] },
+            { id: 'propertyTax', title: 'Apply for Disabled Persons Property Tax Deduction', category: 'Long-Term & Ongoing Actions', description: 'File a form with the County Auditor to get a $12,480 deduction on your home\'s assessed value, lowering your property tax bill.', savings: { monthly: 15, oneTime: 180, description: 'Est. ~$180/yr in property tax savings.' }, deadline: '2026-04-15', contact: { name: 'Howard County Auditor', phone: '(765) 456-2215', link: 'https://www.howardcountyin.gov/auditor' }, steps: [ { text: 'Download State Form 1863 from the Howard County Auditor\'s website.', link: 'https://www.howardcountyin.gov/auditor/deductions' }, { text: 'Complete the form. You will need to provide proof of your disability (your SSDI award letter is sufficient).' }, { text: 'Submit the completed form to the Howard County Auditor\'s Office. It is recommended to file before December 31st to apply to the following year\'s taxes.' } ] },
+            { id: 'vita', title: 'Use VITA for Free Tax Filing', category: 'Long-Term & Ongoing Actions', description: "Use a local VITA site for free tax prep. Ensure they check for the Lifetime Learning Credit (tuition), EITC, and the property tax deduction.", savings: { monthly: 200, oneTime: 2400, description: 'Up to $2,400+/yr in tax credits.' }, deadline: '2026-04-15', contact: { name: 'IRS VITA Locator', phone: '800-906-9887', link: 'https://www.irs.gov/individuals/free-tax-return-preparation-for-qualifying-taxpayers' }, steps: [ { text: 'Starting in late January/early February, use the official IRS VITA Site Locator.', link: 'https://www.irs.gov/individuals/free-tax-return-preparation-for-qualifying-taxpayers' }, { text: 'Find a location in or near Kokomo and call to schedule an appointment.' }, { text: 'Gather all required documents: IDs, SS cards, W-2 from wife, SSA-1099 for you, Form 1098-T for tuition, and records of property tax paid.' }, { text: 'At your appointment, mention all potential credits to the volunteer preparer.' } ] },
+            { id: 'fafsa', title: "Complete FAFSA for Wife's Student Aid", category: 'Long-Term & Ongoing Actions', description: "File the FAFSA to qualify for Pell Grant, state aid (e.g., Adult Student Grant), and IU-specific scholarships.", savings: { monthly: 0, oneTime: 2000, description: 'Up to $2,000+/yr in grants.' }, deadline: '2026-03-01', contact: { name: 'Federal Student Aid', phone: '1-800-433-3243', link: 'https://studentaid.gov/h/apply-for-aid/fafsa' }, steps: [ { text: 'Go to the official Federal Student Aid FAFSA website.', link: 'https://studentaid.gov/h/apply-for-aid/fafsa' }, { text: 'The student (your wife) and you (as the spouse) must each create a personal FSA ID, which acts as a legal signature.', link: 'https://studentaid.gov/fsa-id/create-account/launch' }, { text: 'Start the FAFSA for the correct academic year (e.g., 2026-2027).' }, { text: 'When prompted, add Indiana University\'s school code (for IU Kokomo it is 001814, check for IU Online) so they receive the results.' }, { text: 'Use the IRS Data Retrieval Tool to automatically and accurately import your tax information.' }, { text: 'Complete all sections and submit the application before Indiana\'s state deadline (typically April 15th).' } ] }
         ];
         
-        let appState = { tasks: [] };
+        let appState = { tasks: [], customTasks: [] };
         
+        // --- UTILITY FUNCTIONS ---
         const getDeadlineInfo = (deadlineStr) => {
+            if (!deadlineStr) return { days: Infinity, text: 'No date set', className: 'text-gray-500' };
             const deadline = new Date(deadlineStr + 'T23:59:59.000Z');
             const diffTime = deadline - today;
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -261,102 +205,81 @@
             if (diffDays <= 7) return { days: diffDays, text: `Due in ${diffDays} days`, className: 'deadline-soon' };
             return { days: diffDays, text: `Due in ${diffDays} days`, className: 'text-gray-500' };
         };
-
         const formatCurrency = (amount) => `$${amount.toLocaleString()}`;
 
-        const renderTasks = () => {
+        // --- RENDER FUNCTIONS ---
+        const render = () => {
             const container = document.getElementById('actionPlanContainer');
-            container.innerHTML = '';
+            container.innerHTML = ''; // Clear everything to re-render
+            renderDefaultTasks(container);
+            renderCustomTasks(container);
+            addEventListeners();
+        };
+
+        const renderDefaultTasks = (container) => {
             const categories = [...new Set(appState.tasks.map(t => t.category))];
-            
             categories.forEach(category => {
                 const categoryWrapper = document.createElement('div');
                 categoryWrapper.innerHTML = `<h2 class="text-2xl font-bold text-gray-700 pb-2 border-b-2 border-gray-300 mb-4">${category}</h2>`;
-                
                 const taskList = document.createElement('div');
                 taskList.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
-
                 appState.tasks.filter(t => t.category === category).forEach(task => {
-                    const deadlineInfo = getDeadlineInfo(task.deadline);
-                    const card = document.createElement('div');
-                    card.className = `task-card bg-white rounded-lg border-l-4 border-gray-200 p-5 flex flex-col justify-between ${task.completed ? 'completed' : ''}`;
-                    card.dataset.taskId = task.id;
-                    
-                    let stepsHtml = '';
-                    if (task.steps && task.steps.length > 0) {
-                        const stepItems = task.steps.map(step => {
-                            let stepText = step.text;
-                            if (step.link) {
-                                // Find the text to hyperlink (assuming it's after the first few words)
-                                const linkableText = stepText.split(' ').slice(2).join(' '); // A simple heuristic
-                                if(linkableText){
-                                    stepText = stepText.replace(linkableText, `<a href="${step.link}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline font-medium">${linkableText}</a>`);
-                                } else {
-                                     stepText = `<a href="${step.link}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline font-medium">${stepText}</a>`;
-                                }
-                            }
-                            return `<li class="pb-1">${stepText}</li>`;
-                        }).join('');
-                        stepsHtml = `
-                            <details class="mt-4">
-                                <summary class="cursor-pointer text-sm font-semibold text-blue-700 hover:text-blue-800 flex items-center">
-                                    Show Steps
-                                    <svg class="ml-1 h-4 w-4 arrow-down" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                </summary>
-                                <div class="mt-3 pt-3 border-t">
-                                    <ol class="list-decimal list-inside text-sm space-y-1 text-gray-700">${stepItems}</ol>
-                                </div>
-                            </details>
-                        `;
-                    }
-                    
-                    card.innerHTML = `
-                        <div>
-                            <div class="flex items-start justify-between">
-                                <h3 class="task-title text-lg font-semibold text-gray-800 pr-2">${task.title}</h3>
-                                <input type="checkbox" data-id="${task.id}" class="h-6 w-6 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer flex-shrink-0" ${task.completed ? 'checked' : ''}>
-                            </div>
-                            <p class="text-sm text-gray-600 mt-2">${task.description}</p>
-                        </div>
-                        <div class="mt-4">
-                             <div class="flex items-center justify-between text-sm bg-gray-50 p-3 rounded-md">
-                                <span class="font-semibold text-green-700">Potential Benefit:</span>
-                                <span class="text-right font-medium text-gray-700">${task.savings.description}</span>
-                            </div>
-                            ${stepsHtml}
-                            <div class="flex items-center justify-between mt-3 text-xs pt-3 border-t">
-                                <div class="font-semibold ${deadlineInfo.className}">
-                                    DEADLINE: ${new Date(task.deadline + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                                </div>
-                                <a href="${task.contact.link}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline font-semibold" title="Phone: ${task.contact.phone}">CONTACT</a>
-                            </div>
-                        </div>
-                    `;
-                    taskList.appendChild(card);
+                    taskList.innerHTML += createDefaultTaskCard(task);
                 });
                 categoryWrapper.appendChild(taskList);
                 container.appendChild(categoryWrapper);
             });
-            addEventListeners();
+        };
+        
+        const renderCustomTasks = (container) => {
+            if (appState.customTasks.length > 0) {
+                const categoryWrapper = document.createElement('div');
+                categoryWrapper.id = 'custom-goals-container';
+                categoryWrapper.innerHTML = `<h2 class="text-2xl font-bold text-gray-700 pb-2 border-b-2 border-gray-300 mb-4">My Custom Goals</h2>`;
+                const taskList = document.createElement('div');
+                taskList.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
+                appState.customTasks.forEach(task => {
+                    taskList.innerHTML += createCustomTaskCard(task);
+                });
+                categoryWrapper.appendChild(taskList);
+                container.appendChild(categoryWrapper);
+            }
+        };
+        
+        const createDefaultTaskCard = (task) => {
+            const deadlineInfo = getDeadlineInfo(task.deadline);
+            let stepsHtml = '';
+            if (task.steps && task.steps.length > 0) {
+                const stepItems = task.steps.map(step => {
+                    let stepText = step.link ? `<a href="${step.link}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline font-medium">${step.text}</a>` : step.text;
+                    return `<li class="pb-1">${stepText}</li>`;
+                }).join('');
+                stepsHtml = `<details class="mt-4"><summary class="cursor-pointer text-sm font-semibold text-blue-700 hover:text-blue-800 flex items-center">Show Steps <svg class="ml-1 h-4 w-4 arrow-down" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg></summary><div class="mt-3 pt-3 border-t"><ol class="list-decimal list-inside text-sm space-y-1 text-gray-700">${stepItems}</ol></div></details>`;
+            }
+            return `<div class="task-card bg-white rounded-lg border-l-4 border-gray-200 p-5 flex flex-col justify-between ${task.completed ? 'completed' : ''}" data-task-id="${task.id}" data-task-type="default"><div><div class="flex items-start justify-between"><h3 class="task-title text-lg font-semibold text-gray-800 pr-2">${task.title}</h3><input type="checkbox" data-id="${task.id}" data-type="default" class="h-6 w-6 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer flex-shrink-0" ${task.completed ? 'checked' : ''}></div><p class="text-sm text-gray-600 mt-2">${task.description}</p></div><div class="mt-4"><div class="flex items-center justify-between text-sm bg-gray-50 p-3 rounded-md"><span class="font-semibold text-green-700">Potential Benefit:</span><span class="text-right font-medium text-gray-700">${task.savings.description}</span></div>${stepsHtml}<div class="flex items-center justify-between mt-3 text-xs pt-3 border-t"><div class="font-semibold ${deadlineInfo.className}">DEADLINE: ${new Date(task.deadline + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div><a href="${task.contact.link}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline font-semibold" title="Phone: ${task.contact.phone}">CONTACT</a></div></div></div>`;
         };
 
+        const createCustomTaskCard = (task) => {
+            return `<div class="task-card bg-white rounded-lg border-l-4 border-purple-300 p-5 flex flex-col justify-between ${task.completed ? 'completed' : ''}" data-task-id="${task.id}" data-task-type="custom"><div><div class="flex items-start justify-between"><input type="text" class="custom-input custom-title text-lg font-semibold" data-id="${task.id}" data-field="title" value="${task.title}" placeholder="My New Goal Title"><input type="checkbox" data-id="${task.id}" data-type="custom" class="h-6 w-6 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer flex-shrink-0 ml-2" ${task.completed ? 'checked' : ''}></div><textarea class="custom-input text-sm text-gray-600 mt-2" data-id="${task.id}" data-field="description" placeholder="A brief description of my goal...">${task.description}</textarea></div><div class="mt-4 space-y-3"><div class="bg-gray-50 p-3 rounded-md space-y-2"><div class="grid grid-cols-3 gap-2 text-sm items-center"><label class="font-semibold text-green-700 col-span-1">Monthly:</label><input type="number" class="custom-input col-span-2" data-id="${task.id}" data-field="monthly" value="${task.savings.monthly}" placeholder="$ Amount"></div><div class="grid grid-cols-3 gap-2 text-sm items-center"><label class="font-semibold text-indigo-700 col-span-1">One-Time:</label><input type="number" class="custom-input col-span-2" data-id="${task.id}" data-field="oneTime" value="${task.savings.oneTime}" placeholder="$ Amount"></div></div><div class="flex items-center justify-between pt-3 border-t"><input type="date" class="custom-input text-xs font-semibold" data-id="${task.id}" data-field="deadline" value="${task.deadline}"><button data-id="${task.id}" class="delete-custom-task-btn text-red-500 hover:text-red-700 ml-4 p-1 rounded-full"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div></div></div>`;
+        };
+        
+        // --- DASHBOARD UPDATE ---
         const updateDashboard = () => {
-            const totalTasks = appState.tasks.length;
-            const completedTasks = appState.tasks.filter(t => t.completed).length;
-            
+            const allTasks = [...appState.tasks, ...appState.customTasks];
+            const totalTasks = allTasks.length;
+            const completedTasks = allTasks.filter(t => t.completed).length;
+            document.getElementById('tasksCompleted').innerText = `${completedTasks} / ${totalTasks}`;
+            const customTotal = appState.customTasks.length;
+            const customCompleted = appState.customTasks.filter(t => t.completed).length;
+            document.getElementById('customGoals').innerText = `${customCompleted} / ${customTotal}`;
             const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
             document.getElementById('progressBar').style.width = `${progress}%`;
             document.getElementById('progressPercentage').innerText = `${Math.round(progress)}%`;
-            document.getElementById('tasksCompleted').innerText = `${completedTasks} / ${totalTasks}`;
-            
-            const totalMonthlySavings = appState.tasks.reduce((sum, task) => task.completed ? sum + task.savings.monthly : sum, 0);
-            const totalOneTimeBenefits = appState.tasks.reduce((sum, task) => task.completed ? sum + task.savings.oneTime : sum, 0);
+            const totalMonthlySavings = allTasks.reduce((sum, task) => task.completed ? sum + (Number(task.savings.monthly) || 0) : sum, 0);
+            const totalOneTimeBenefits = allTasks.reduce((sum, task) => task.completed ? sum + (Number(task.savings.oneTime) || 0) : sum, 0);
             document.getElementById('monthlySavings').innerText = formatCurrency(totalMonthlySavings);
             document.getElementById('oneTimeBenefits').innerText = formatCurrency(totalOneTimeBenefits);
-
-            const upcomingTasks = appState.tasks.filter(t => !t.completed);
+            const upcomingTasks = allTasks.filter(t => !t.completed && t.deadline);
             if(upcomingTasks.length > 0) {
                 const nextTask = upcomingTasks.sort((a,b) => new Date(a.deadline) - new Date(b.deadline))[0];
                 const deadlineInfo = getDeadlineInfo(nextTask.deadline);
@@ -366,49 +289,92 @@
             }
         };
 
+        // --- EVENT HANDLERS ---
         const handleTaskToggle = (e) => {
-            const taskId = e.target.dataset.id;
-            const task = appState.tasks.find(t => t.id === taskId);
+            const taskList = e.target.dataset.type === 'default' ? appState.tasks : appState.customTasks;
+            const task = taskList.find(t => t.id === e.target.dataset.id);
             if (task) {
                 task.completed = e.target.checked;
                 saveState();
-                const card = e.target.closest('.task-card');
-                if (task.completed) {
-                    card.classList.add('completed');
-                } else {
-                    card.classList.remove('completed');
-                }
+                e.target.closest('.task-card').classList.toggle('completed', task.completed);
                 updateDashboard();
             }
         };
 
-        const addEventListeners = () => {
-            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                checkbox.addEventListener('change', handleTaskToggle);
-            });
+        const handleCustomTaskUpdate = (e) => {
+            const task = appState.customTasks.find(t => t.id === e.target.dataset.id);
+            if (!task) return;
+            const field = e.target.dataset.field;
+            if (['title', 'description', 'deadline'].includes(field)) task[field] = e.target.value;
+            else if (['monthly', 'oneTime'].includes(field)) task.savings[field] = Number(e.target.value) || 0;
+            saveState();
+            updateDashboard();
         };
 
+        const deleteCustomTask = (e) => {
+            const taskId = e.currentTarget.dataset.id;
+            appState.customTasks = appState.customTasks.filter(t => t.id !== taskId);
+            saveState();
+            init();
+        };
+        
+        const addGoal = () => {
+            appState.customTasks.push({ id: `custom-${Date.now()}`, title: '', description: '', savings: { monthly: 0, oneTime: 0 }, deadline: '', completed: false });
+            saveState();
+            init();
+        };
+
+        const exportPlan = () => {
+            const dataStr = JSON.stringify(appState, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            const exportFileDefaultName = 'Financia-to-do-to-list.json';
+            let linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        };
+
+        const printPlan = () => {
+            window.print();
+        };
+
+        const addEventListeners = () => {
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => checkbox.addEventListener('change', handleTaskToggle));
+            document.querySelectorAll('.custom-input, textarea.custom-input').forEach(input => input.addEventListener('input', handleCustomTaskUpdate));
+            document.querySelectorAll('.delete-custom-task-btn').forEach(btn => btn.addEventListener('click', deleteCustomTask));
+        };
+        
+        // --- LOCAL STORAGE & INITIALIZATION ---
         const saveState = () => {
-            const stateToSave = appState.tasks.map(t => ({ id: t.id, completed: t.completed }));
-            localStorage.setItem('financialActionPlan', JSON.stringify(stateToSave));
+            const stateToSave = {
+                completedTasks: appState.tasks.map(t => ({ id: t.id, completed: t.completed })),
+                customTasks: appState.customTasks
+            };
+            localStorage.setItem('financialActionPlanState', JSON.stringify(stateToSave));
         };
         
         const loadState = () => {
-            const savedState = localStorage.getItem('financialActionPlan');
-            if (savedState) {
-                const parsedState = JSON.parse(savedState);
-                return tasks.map(defaultTask => {
-                    const savedTask = parsedState.find(st => st.id === defaultTask.id);
-                    return savedTask ? { ...defaultTask, completed: savedTask.completed } : defaultTask;
+            const savedStateJSON = localStorage.getItem('financialActionPlanState');
+            if (savedStateJSON) {
+                const savedState = JSON.parse(savedStateJSON);
+                appState.tasks = defaultTasks.map(defaultTask => {
+                    const savedTask = savedState.completedTasks.find(st => st.id === defaultTask.id);
+                    return { ...defaultTask, completed: savedTask ? savedTask.completed : false };
                 });
+                appState.customTasks = savedState.customTasks || [];
+            } else {
+                appState.tasks = defaultTasks.map(t => ({...t, completed: false }));
+                appState.customTasks = [];
             }
-            return tasks.map(t => ({...t})); // Return a fresh copy
         };
 
         const init = () => {
-            appState.tasks = loadState();
-            renderTasks();
+            loadState();
+            render();
             updateDashboard();
+            document.getElementById('addGoalBtn').addEventListener('click', addGoal);
+            document.getElementById('exportBtn').addEventListener('click', exportPlan);
+            document.getElementById('printBtn').addEventListener('click', printPlan);
         };
 
         init();
